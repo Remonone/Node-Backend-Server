@@ -39,7 +39,7 @@ if (EnvVars.nodeEnv === NodeEnvs.Production) {
 
 // **** Add API routes **** //
 
-app.use('/api', api)
+app.use('/api/v1', api)
 
 // Setup error handler
 app.use((

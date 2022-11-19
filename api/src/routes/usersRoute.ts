@@ -2,13 +2,16 @@ import { Router } from "express";
 
 const users = Router()
 
-users.get('', (req, res) => {
-    res.send('This is a user API')
+users.post('/signup', (req, res) => {
+    res.send('This is a registration form')
 })
 
-users.get('/:id', (req, res) => {
-    const { id } = req.params
-    res.send(`Selected id: ${id}`)
+users.post('/signin', (req, res) => {
+    res.send('This is a login form')
+})
+
+users.put('/changePassword', (req, res) => {
+    res.send('This is a login form')
 })
 
 export default users

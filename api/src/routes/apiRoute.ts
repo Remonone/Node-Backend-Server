@@ -1,13 +1,11 @@
 import { Router } from "express";
+import todos from "./todosRoute";
 import users from "./usersRoute";
 
 const api = Router()
 
-api.get('', (req, res) => {
-    res.send('Home page')
-})
-
-api.use('/users', users)
+api.use('', users)
+api.use('/todos', todos)
 
 
 export default api
