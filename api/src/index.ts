@@ -19,10 +19,10 @@ dataBase.connect((err) => {
     if(err) throw err
     console.log(`Connected to Data Base with port: ${dataBase.port}`)
     dataBase.query(USERS_CREATE, (err, res) => {
-        console.log(res)
+        
     })
     dataBase.query(TODOS_CREATE, (err, res) => {
-        console.log(res)
+        
     })
     server.listen(process.env.PORT || 3000, () => logger.info(msg));
 })
