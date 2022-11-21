@@ -49,7 +49,28 @@ users.post('/signin', (req, res) => {
 })
 
 users.put('/changePassword', (req, res) => {
-    res.send('This is a login form')
+    const validatorObject = {
+        webToken: 'string',
+        oldPass: 'string',
+        newPass: 'string'
+    }
+    if(!validateParams(req.body, validatorObject)) return res.status(400).json({message: "Invalid body"})
+    const payload = convertToken(req.body.webToken)
+    if(!!payload.message) return res.status(payload.status).json({message: payload.message})
+    const request = `SELECT * FROM users WHERE EMAIL = $1 LIMIT 1`
+    const dependencies = [payload.email]
+    dataBase.query(request, dependencies, (err, result) => {
+        if(err) return res.status(500).json({message: err.message})
+        if(result.rows.length < 1) return res.status(400).json({message: "Authentication error"})
+        const user = result.rows[0]
+        bcrypt.compare(req.body.oldPass, user.password, (error, compare) => {
+            if(error) return res.status(500).json({message: "Unhandled error"})
+            if(!compare) return res.status(400).json({message: "Incorrect data"})
+            const hashNewPassword = bcrypt.hashSync(req.body.newPass, roundsSalt)
+            dataBase.query(`UPDATE users SET PASSWORD = $1 WHERE EMAIL = $2`, [hashNewPassword, user.email])
+            return res.status(200).json({message: "Success"})
+        })
+    })
 })
 
 users.get('/profile', (req, res) => {
