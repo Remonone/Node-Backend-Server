@@ -15,3 +15,12 @@ export interface TodoItem {
     item_updated: string
     status: Status
 }
+
+// USERS
+
+export const roundsSalt = 10
+
+export interface UserCredentials{
+    email: string
+    password: string
+}
