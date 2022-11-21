@@ -1,7 +1,9 @@
 import { Router } from "express"
 import { dataBase } from ".."
-import {Status, TodoItem} from '@src/types/types'
+import {dateFormat, Status, TodoItem} from '@src/types/types'
 import { validateParams } from "@src/utils/utils"
+import moment from "moment"
+import { convertToken } from "@src/utils/jwt"
 
 const todos = Router()
 
@@ -24,27 +26,36 @@ todos.get('', (req, res) => {
 })
 
 todos.post('', (req, res) => {
-    const body: TodoItem = req.body
-    const validatorObject: TodoItem = {
-        name: 'string',
-        user_id: 0,
-        item_created: 'string',
-        item_updated: 'string',
-        status: 'expecting'
-    }
-    if(!validateParams(body, validatorObject)) return res.status(400).send('Invalid body')
-    const request = `INSERT INTO todos(NAME, USER_ID, CREATED_ON, UPDATED_ON, STATUS, DESCRIPTION) VALUES ($1, $2, $3, $4, $5, $6)`
-    let arrayToPush = Object.values(body)
-    if(!Object.keys(body).find(item => item === 'description')){
-        arrayToPush = [...arrayToPush, null]
-    }
-    const dependencies = arrayToPush
-    dataBase.query(request, dependencies, (err, result) => {
-        if(err) {
-            return res.status(500).json({message: err.message})
+    const validatorObject = {
+        webToken: 'string',
+        todos: {
+            name: 'string',
+            status: 'expecting'
         }
-        res.status(200).json({
-            message: 'Successfully uploaded'
+    }
+    if(!validateParams(req.body, validatorObject)) return res.status(400).json({message: 'Invalid body'})
+    const payload = convertToken(req.body.webToken)
+    if(!!payload.message) return res.status(payload.status).json({message: payload.message})
+    dataBase.query(`SELECT ID FROM users WHERE EMAIL = $1`, [payload.email], (err, result) => {
+        if(err) return res.status(500).json({message: "Unhandled Error"})
+        if(result.rows.length < 1) return res.status(400).json({message: "User was not found"})
+
+        const id = result.rows[0].id
+        const date = moment(Date.now()).format(dateFormat)
+
+        const request = `INSERT INTO todos(NAME, STATUS, DESCRIPTION, USER_ID, CREATED_ON, UPDATED_ON) VALUES ($1, $2, $3, $4, $5, $6)`
+        let dependencies = Object.values(req.body.todos)
+
+        if(!Object.keys(req.body.todos).find(key => key === 'description')){
+            dependencies = [...dependencies, null]
+        }
+        dependencies.push(...[id, date, date])
+        
+        dataBase.query(request, dependencies, (error, result) => {
+            if(error) {
+                return res.status(500).json({message: error.message})
+            }
+            res.status(200).json({message: 'Successfully uploaded'})
         })
     })
 })

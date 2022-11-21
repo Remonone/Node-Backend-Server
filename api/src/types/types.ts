@@ -18,6 +18,7 @@ export interface TodoItem {
 
 // USERS
 
+export const dateFormat = 'YYYY-MM-DD HH:mm:ss'
 export const roundsSalt = 10
 
 export interface UserCredentials{

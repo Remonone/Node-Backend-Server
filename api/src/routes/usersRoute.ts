@@ -2,7 +2,7 @@ import { convertToken, getToken } from "@src/utils/jwt";
 import { validateParams } from "@src/utils/utils";
 import { Router } from "express";
 import bcrypt from "bcrypt"
-import { roundsSalt, UserCredentials } from "@src/types/types";
+import { dateFormat, roundsSalt, UserCredentials } from "@src/types/types";
 import { dataBase } from "..";
 import moment from "moment";
 
@@ -15,7 +15,7 @@ users.post('/signup', (req, res) => {
     }
     if(!validateParams(req.body, validatorObject)) return res.status(400).json({message: "Invalid body"})
     const jwtToken = getToken(req.body.email)
-    const date = moment(Date.now()).format('YYYY-MM-DD HH:mm:ss')
+    const date = moment(Date.now()).format(dateFormat)
     const request = `INSERT INTO users(EMAIL, PASSWORD, CREATED_ON, UPDATED_ON) VALUES ($1, $2, $3, $4)`
     bcrypt.hash(req.body.password, roundsSalt, (err, hash) => {
         if(err) return res.status(500).json({message: "Internal Server Error"})
@@ -67,7 +67,8 @@ users.put('/changePassword', (req, res) => {
             if(error) return res.status(500).json({message: "Unhandled error"})
             if(!compare) return res.status(400).json({message: "Incorrect data"})
             const hashNewPassword = bcrypt.hashSync(req.body.newPass, roundsSalt)
-            dataBase.query(`UPDATE users SET PASSWORD = $1 WHERE EMAIL = $2`, [hashNewPassword, user.email])
+            const date = moment(Date.now()).format(dateFormat)
+            dataBase.query(`UPDATE users SET PASSWORD = $1 UPDATED_ON = $2 WHERE EMAIL = $3`, [hashNewPassword, date, user.email])
             return res.status(200).json({message: "Success"})
         })
     })
