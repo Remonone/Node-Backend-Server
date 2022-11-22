@@ -65,19 +65,10 @@
     /* Advanced Options */
     "skipLibCheck": true,                     /* Skip type checking of declaration files. */
     "forceConsistentCasingInFileNames": true,  /* Disallow inconsistently-cased references to the same file. */
-    "paths": {
-      "@src/*": [
-        "src/*"
-      ],
-    },
     "useUnknownInCatchVariables": false
   },
   "include": [
-    "src/**/*.ts",
-    "spec/**/*.ts",
-    "build.ts"
-  ],
-  "exclude": [
-    "src/public/"
+    "api/src/**/*.ts",
+    "api/build.ts"
   ]
 }

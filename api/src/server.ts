@@ -8,10 +8,10 @@ import dotenv from 'dotenv'
 import 'express-async-errors';
 
 import logger from 'jet-logger';
-import EnvVars from '@src/declarations/major/EnvVars';
-import HttpStatusCodes from '@src/declarations/major/HttpStatusCodes';
-import { NodeEnvs } from '@src/declarations/enums';
-import { RouteError } from '@src/declarations/classes';
+import EnvVars from './declarations/major/EnvVars';
+import HttpStatusCodes from './declarations/major/HttpStatusCodes';
+import { NodeEnvs } from './declarations/enums';
+import { RouteError } from './declarations/classes';
 import api from './routes/apiRoute';
 
 

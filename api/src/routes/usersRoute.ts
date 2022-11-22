@@ -1,8 +1,8 @@
-import { convertToken, getToken } from "@src/utils/jwt";
-import { validateParams } from "@src/utils/utils";
+import { convertToken, getToken } from "../utils/jwt";
+import { validateParams } from "../utils/utils";
 import { Router } from "express";
 import bcrypt from "bcrypt"
-import { dateFormat, roundsSalt, UserCredentials } from "@src/types/types";
+import { dateFormat, roundsSalt, UserCredentials } from "../types/types";
 import { dataBase } from "..";
 import moment from "moment";
 

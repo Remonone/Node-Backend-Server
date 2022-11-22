@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { dataBase } from "..";
 import todos from "./todosRoute";
 import users from "./usersRoute";
 
